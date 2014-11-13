@@ -219,8 +219,6 @@ describe('executor', function() {
   });
 
   describe('with boot with callback', function() {
-
-
     it('should run `boot/*` files asynchronously', function(done) {
       boot.execute(app, simpleAppInstructions(), function() {
         expect(process.bootFlags).to.eql([
@@ -234,7 +232,6 @@ describe('executor', function() {
         done();
       });
     });
-
   });
 
   describe('with PaaS and npm env variables', function() {
