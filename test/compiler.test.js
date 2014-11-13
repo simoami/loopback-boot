@@ -816,6 +816,42 @@ describe('compiler', function() {
           }
         }]);
     });
+
+    it('supports multiple instances of the same middleware', function() {
+
+      appdir.writeConfigFileSync('middleware.json', {
+        'final': {
+          './middleware': [
+            {
+              args: 'first'
+            },
+            {
+              args: 'second'
+            }
+          ]
+        },
+      });
+
+      var instructions = boot.compile(appdir.PATH);
+
+      expect(instructions.middleware.middleware)
+        .to.eql([
+          {
+            factoryFile: path.resolve(appdir.PATH, 'middleware.json'),
+            config: {
+              phase: 'final',
+              args: 'first'
+            }
+          },
+          {
+            factoryFile: path.resolve(appdir.PATH, 'middleware.json'),
+            config: {
+              phase: 'final',
+              args: 'second'
+            }
+          },
+        ]);
+    });
   });
 });
 
