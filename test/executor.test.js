@@ -339,21 +339,21 @@ describe('executor', function() {
             factoryFile: pushNamePath,
             config: {
               phase: 'initial',
-              config: 'initial'
+              args: 'initial'
             }
           },
           {
             factoryFile: pushNamePath,
             config: {
               phase: 'custom',
-              config: 'custom'
+              args: 'custom'
             }
           },
           {
             factoryFile: pushNamePath,
             config: {
               phase: 'routes',
-              config: 'routes'
+              args: 'routes'
             }
           },
           {
@@ -361,7 +361,7 @@ describe('executor', function() {
             config: {
               phase: 'routes',
               enabled: false,
-              config: 'disabled'
+              args: 'disabled'
             }
           }
         ]

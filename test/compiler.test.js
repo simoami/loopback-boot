@@ -681,13 +681,13 @@ describe('compiler', function() {
 
     it('emits middleware instructions', function() {
       appdir.writeConfigFileSync('middleware.json', {
-        phases: [ 'initial', 'custom' ],
-        middleware: {
+        initial: {
+        },
+        custom: {
           'loopback/server/middleware/url-not-found': {
-            phase: 'final',
-            config: 'some-config-data'
+            args: 'some-config-data'
           }
-        }
+        },
       });
 
       var instructions = boot.compile(appdir.PATH);
@@ -698,8 +698,8 @@ describe('compiler', function() {
           factoryFile:
             require.resolve('loopback/server/middleware/url-not-found'),
           config: {
-            phase: 'final',
-            config: 'some-config-data'
+            phase: 'custom',
+            args: 'some-config-data'
           }
         }]
       });
@@ -707,8 +707,8 @@ describe('compiler', function() {
 
     it('fails when a module middleware cannot be resolved', function() {
       appdir.writeConfigFileSync('middleware.json', {
-        middleware: {
-          'loopback/path-does-not-exist': { phase: 'final' }
+        final: {
+          'loopback/path-does-not-exist': { }
         }
       });
 
@@ -718,16 +718,16 @@ describe('compiler', function() {
 
     it('resolves paths relatively to appRootDir', function() {
       appdir.writeConfigFileSync('./middleware.json', {
-        middleware: {
+        routes: {
           // resolves to ./middleware.json
-          './middleware': { phase: 'routes' }
+          './middleware': { }
         }
       });
 
       var instructions = boot.compile(appdir.PATH);
 
       expect(instructions.middleware).to.eql({
-        phases: [],
+        phases: ['routes'],
         middleware: [{
           factoryFile: path.resolve(appdir.PATH, 'middleware.json'),
           config: { phase: 'routes' }
@@ -735,12 +735,11 @@ describe('compiler', function() {
       });
     });
 
-    it('merges configs', function() {
+    it('merges config.args', function() {
       appdir.writeConfigFileSync('./middleware.json', {
-        middleware: {
+        routes: {
           './middleware': {
-            phase: 'routes',
-            config: {
+            args: {
               key: 'initial value'
             }
           }
@@ -748,9 +747,9 @@ describe('compiler', function() {
       });
 
       appdir.writeConfigFileSync('./middleware.local.json', {
-        middleware: {
+        routes: {
           './middleware': {
-            config: {
+            args: {
               key: 'custom value',
             }
           }
@@ -759,9 +758,63 @@ describe('compiler', function() {
 
       var instructions = boot.compile(appdir.PATH);
 
-      expect(instructions.middleware.middleware[0].config.config).to.eql({
+      expect(instructions.middleware.middleware[0].config.args).to.eql({
         key: 'custom value'
       });
+    });
+
+    it('merges config.enabled', function() {
+      appdir.writeConfigFileSync('./middleware.json', {
+        routes: {
+          './middleware': {
+            args: {
+              key: 'initial value'
+            }
+          }
+        }
+      });
+
+      appdir.writeConfigFileSync('./middleware.local.json', {
+        routes: {
+          './middleware': {
+            enabled: false
+          }
+        }
+      });
+
+      var instructions = boot.compile(appdir.PATH);
+
+      expect(instructions.middleware.middleware[0].config)
+        .to.have.property('enabled', false);
+    });
+
+    it('flattens sub-phases', function() {
+      appdir.writeConfigFileSync('middleware.json', {
+        'initial:after': {
+        },
+        'custom:before': {
+          'loopback/server/middleware/url-not-found': {
+            args: 'some-config-data'
+          }
+        },
+        'custom:after': {
+
+        }
+      });
+
+      var instructions = boot.compile(appdir.PATH);
+
+      expect(instructions.middleware.phases, 'phases')
+        .to.eql(['initial', 'custom']);
+      expect(instructions.middleware.middleware, 'middleware')
+        .to.eql([{
+          factoryFile:
+            require.resolve('loopback/server/middleware/url-not-found'),
+          config: {
+            phase: 'custom:before',
+            args: 'some-config-data'
+          }
+        }]);
     });
   });
 });

@@ -1,9 +1,7 @@
 {
-  "phases": ["initial"],
-  "middleware": {
+  "initial": {
     "../../helpers/push-name-middleware": {
-      "phase": "initial",
-      "config": "custom-middleware"
+      "args": "custom-middleware"
     }
   }
 }
