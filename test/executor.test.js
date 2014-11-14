@@ -333,28 +333,28 @@ describe('executor', function() {
         phases: ['initial', 'custom'],
         middleware: [
           {
-            factoryFile: pushNamePath,
+            sourceFile: pushNamePath,
             config: {
               phase: 'initial',
               args: 'initial'
             }
           },
           {
-            factoryFile: pushNamePath,
+            sourceFile: pushNamePath,
             config: {
               phase: 'custom',
               args: 'custom'
             }
           },
           {
-            factoryFile: pushNamePath,
+            sourceFile: pushNamePath,
             config: {
               phase: 'routes',
               args: 'routes'
             }
           },
           {
-            factoryFile: pushNamePath,
+            sourceFile: pushNamePath,
             config: {
               phase: 'routes',
               enabled: false,

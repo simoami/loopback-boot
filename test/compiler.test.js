@@ -695,7 +695,7 @@ describe('compiler', function() {
       expect(instructions.middleware).to.eql({
         phases: ['initial', 'custom'],
         middleware: [{
-          factoryFile:
+          sourceFile:
             require.resolve('loopback/server/middleware/url-not-found'),
           config: {
             phase: 'custom',
@@ -729,7 +729,7 @@ describe('compiler', function() {
       expect(instructions.middleware).to.eql({
         phases: ['routes'],
         middleware: [{
-          factoryFile: path.resolve(appdir.PATH, 'middleware.json'),
+          sourceFile: path.resolve(appdir.PATH, 'middleware.json'),
           config: { phase: 'routes' }
         }]
       });
@@ -808,7 +808,7 @@ describe('compiler', function() {
         .to.eql(['initial', 'custom']);
       expect(instructions.middleware.middleware, 'middleware')
         .to.eql([{
-          factoryFile:
+          sourceFile:
             require.resolve('loopback/server/middleware/url-not-found'),
           config: {
             phase: 'custom:before',
@@ -837,14 +837,14 @@ describe('compiler', function() {
       expect(instructions.middleware.middleware)
         .to.eql([
           {
-            factoryFile: path.resolve(appdir.PATH, 'middleware.json'),
+            sourceFile: path.resolve(appdir.PATH, 'middleware.json'),
             config: {
               phase: 'final',
               args: 'first'
             }
           },
           {
-            factoryFile: path.resolve(appdir.PATH, 'middleware.json'),
+            sourceFile: path.resolve(appdir.PATH, 'middleware.json'),
             config: {
               phase: 'final',
               args: 'second'
